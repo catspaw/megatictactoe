@@ -37,8 +37,17 @@
 
     defaults: function() {
       return {
+        // A collection of 9 squares that make up this board
         squares: new models.Squares(),
-        winnerToken: ""
+        
+        // Once the game has won, which token won the board.
+        winnerToken: "",
+        
+        // The last index of where this board was clicked.
+        lastClickIndex: -1,
+        
+        // Whether or not this board can currently be clicked.
+        active: false
       }
     },
   
@@ -54,11 +63,12 @@
     },
     
     // One of our squares has been updated.  Check the status of the board.
-    refresh: function(token, index) {
+    refresh: function(square) {
       if (!(this.isWon()) && this.checkForWin()) {
-        this.set('winnerToken', token);
+        this.set('winnerToken', square.get('token'));
         console.log("New winner!");
       }
+      this.set('lastClickIndex', this.get('squares').indexOf(square));
     },
     
     isWon: function() {

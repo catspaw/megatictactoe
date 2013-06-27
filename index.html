@@ -19,6 +19,15 @@
   float: left;
   border: thin solid black;
 }
+
+.overlay {
+  height: 278px;
+  width: 278px;
+  position: absolute;
+  background: grey;
+  opacity: 0.2;
+  pointer-events:auto; /* Set to 'none' to click right through this overlay. */
+}
 </style>
 </head>
 
@@ -31,6 +40,7 @@
 </script>
 
 <script type="text/html" id="boardTemplate">
+<div class='overlay'></div>
 </script>
 
 <script src="tictactoe.js"></script>

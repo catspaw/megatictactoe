@@ -40,9 +40,10 @@
     
     initialize: function() {
       var squares = this.model.get('squares');
-      squares.on('add', this.addOne, this);
-      this.model.on('change', this.refresh, this);
-
+      squares.on('add', this.addOne, this);      
+      this.model.on('change:winnerToken', this.won, this);
+      this.model.on('change:active', this.setActive, this);
+      
       this.$el.html(this.template(this.model.toJSON()));      
       this.model.fill();
     },
@@ -53,10 +54,18 @@
       this.$el.append(view.render().el);
     },
     
-    refresh: function() {
-      if (this.model.isWon()) {
-        // TODO: make a transparent 'you won here' graphic.
-        this.$el.css('background', '#EEE');
+    won: function() {
+      // TODO: make a transparent 'you won here' graphic.
+      this.$el.css('background', '#EEE');
+    },
+    
+    setActive: function() {
+      if (this.model.get('active')) {
+        this.$('.overlay').css('background', 'white');
+        this.$('.overlay').css('pointer-events', 'none');
+      } else {
+        this.$('.overlay').css('background', 'grey');
+        this.$('.overlay').css('pointer-events', 'auto');
       }
     },
     
@@ -74,13 +83,22 @@
     initialize: function() {
       var game = this.collection;
       game.get('boards').on('add', this.addOne, this);
+      game.get('boards').on('change:lastClickIndex', this.setBoard, this);
       
       game.fill();
+      this.setBoard(null, 4);
     },
     
     addOne: function(item) {
       var view = new views.BoardView({model: item});
       $('#game').append(view.render().el);
+    },
+    
+    setBoard: function(last_board, index) {
+      console.log("Set only clickable board to be: " + index);
+      for (var i=0; i<9; i++) {
+        this.collection.get('boards').at(i).set('active', i == index);
+      }
     },
     
     render: function() {}
