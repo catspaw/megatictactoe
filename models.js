@@ -125,7 +125,7 @@
     fill: function() {
       for (var i=0; i<9; i++) {
         this.get('boards').add(new models.Board());
-      }      
+      }
     },
 
   });

@@ -4,18 +4,33 @@
 <script src="lib/jquery-ui-1.8.18.custom.min.js"></script>
 <script src="lib/underscore-min.js"></script>
 <script src="lib/backbone.js"></script>
+
+<style>
+.square {
+  margin: 0px;
+}
+
+.square img {
+  border: thin solid #EEE;
+}
+
+.squares {
+  width: 278px;
+  float: left;
+  border: thin solid black;
+}
+</style>
 </head>
 
 <body>
 
-<div id='game'></div>
+<div id='game' style='width: 900px;'></div>
 
 <script type="text/html" id="squareTemplate">
-[<span class='token'></span>]
+<img src="img/empty.jpg" />
 </script>
 
 <script type="text/html" id="boardTemplate">
-{{<div class='squares'></div>}}
 </script>
 
 <script src="tictactoe.js"></script>

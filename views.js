@@ -16,7 +16,11 @@
     
     render: function() {
       this.$el.html(this.template(this.model.toJSON()));
-      this.$('.token').text(this.model.get('token'));
+      if (this.model.get('token') == "X") {
+        this.$('img').attr("src", "img/X.jpg");
+      } else if (this.model.get('token') == "O") {
+        this.$('img').attr("src", "img/O.jpg");
+      }
       return this;
     },
     
@@ -30,6 +34,7 @@
 
   views.BoardView = Backbone.View.extend({
     tagName: 'div',
+    className: 'squares',
     
     template: _.template($('#boardTemplate').html()),
     
@@ -44,12 +49,14 @@
     
     addOne: function(item) {
       var view = new views.SquareView({model: item});
-      this.$('div').append(view.render().el);
+      // this.$('div').append(view.render().el);
+      this.$el.append(view.render().el);
     },
     
     refresh: function() {
       if (this.model.isWon()) {
-        console.log("Big X on the board.");
+        // TODO: make a transparent 'you won here' graphic.
+        this.$el.css('background', '#EEE');
       }
     },
     
