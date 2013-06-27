@@ -120,6 +120,7 @@
     },
   
     initialize: function() {
+      this.get('boards').on('change:winnerToken', this.checkEndState, this);
     },
     
     // When a turn is over, switch which player is the currentToken.
@@ -137,6 +138,29 @@
         this.get('boards').add(new models.Board());
       }
     },
+    
+    // When one of our boards has been won, check if the game is over.
+    checkEndState: function() {
+      // Lazy man's winner algorithm.  Check three Square indices for equality
+      // excluding the empty string.
+      var checkThree = function(x, y, z) {
+        var sq = this.get('boards');
+        if (!(sq.at(x).isWon())) {
+          return false;
+        }
+        var first = sq.at(x).get('winnerToken');
+        return first == sq.at(y).get('winnerToken') && first == sq.at(z).get('winnerToken');
+      };
+      
+      checkThree = _.bind(checkThree, this);
+      var row = checkThree(0,1,2) || checkThree(3,4,5) || checkThree(6,7,8);
+      var col = checkThree(0,3,6) || checkThree(1,4,7) || checkThree(2,5,8);
+      var diag = checkThree(0,4,8) || checkThree(2,4,6);
+      
+      if (row || col || diag) {
+        alert("Game over.");
+      }
+    }
 
   });
   

@@ -6,6 +6,10 @@
 <script src="lib/backbone.js"></script>
 
 <style>
+#game {
+  width: 900px;
+}
+
 .square {
   margin: 0px;
 }
@@ -26,15 +30,34 @@
   position: absolute;
   background: grey;
   opacity: 0.2;
-  background-size: 100%;
   pointer-events:auto; /* Set to 'none' to click right through this overlay. */
+}
+
+.capturedoverlay {
+  height: 278px;
+  width: 278px;
+  position: absolute;
+  opacity: 0.2;
+  background-size: 100%;
+  pointer-events:none;
+}
+
+#infobox {
+  top: 40px;
+  right: 20px;
+  border: thin solid green;
+  position: absolute;
+  padding: 10px;
+  font-size: 1.5em;;
 }
 </style>
 </head>
 
 <body>
 
-<div id='game' style='width: 900px;'></div>
+<div id='game'></div>
+
+<div id='infobox'>Current player: <span id='currentToken'>X</span></div>
 
 <script type="text/html" id="squareTemplate">
 <img src="img/empty.jpg" />
@@ -42,6 +65,7 @@
 
 <script type="text/html" id="boardTemplate">
 <div class='overlay'></div>
+<div class='capturedoverlay'></div>
 </script>
 
 <script src="tictactoe.js"></script>

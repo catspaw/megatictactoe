@@ -42,6 +42,7 @@
       var squares = this.model.get('squares');
       squares.on('add', this.addOne, this);      
       this.model.on('change:active', this.setActive, this);
+      this.model.on('change:winnerToken', this.captureBoard, this);
       
       this.$el.html(this.template(this.model.toJSON()));      
       this.model.fill();
@@ -61,21 +62,17 @@
         this.$('.overlay').css('background', 'grey');
         this.$('.overlay').css('pointer-events', 'auto');
       }
-      
-      // We have to do this each time, and can't just rely on a listen
-      // to our model's winnerToken property because using .css to set
-      // 'background' overrides the 'background-image' property.  Ugh.
-      if (this.model.get('winnerToken')) {
-        var winnerImg = 'url(img/' + this.model.get('winnerToken') + '.jpg)';
-        this.$('.overlay').css('background-image', winnerImg);
-        this.$('.overlay').css('background-size', '100%');
-      }
+    },
+    
+    captureBoard: function() {
+      var winnerImg = 'url(img/' + this.model.get('winnerToken') + '.jpg)';
+      this.$('.capturedoverlay').css('background-image', winnerImg);
     },
     
     // Purposefully blank.  Let init and addOne handle all the rendering.
     render: function() {
       return this;
-    }  
+    }
     
    });
   
@@ -87,6 +84,7 @@
       var game = this.collection;
       game.get('boards').on('add', this.addOne, this);
       game.get('boards').on('change:lastClickIndex', this.setBoard, this);
+      game.on('change:currentToken', this.render, this);
       
       game.fill();
       this.setBoard(null, 4);
@@ -98,13 +96,16 @@
     },
     
     setBoard: function(last_board, index) {
-      console.log("Set only clickable board to be: " + index);
       for (var i=0; i<9; i++) {
         this.collection.get('boards').at(i).set('active', i == index);
       }
     },
     
-    render: function() {}
+    render: function() {
+      $('#currentToken').html(this.collection.get('currentToken'));
+      return this;
+    }
+    
   });
 
 })( app.views);
