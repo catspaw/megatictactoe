@@ -41,7 +41,6 @@
     initialize: function() {
       var squares = this.model.get('squares');
       squares.on('add', this.addOne, this);      
-      this.model.on('change:winnerToken', this.won, this);
       this.model.on('change:active', this.setActive, this);
       
       this.$el.html(this.template(this.model.toJSON()));      
@@ -54,11 +53,6 @@
       this.$el.append(view.render().el);
     },
     
-    won: function() {
-      // TODO: make a transparent 'you won here' graphic.
-      this.$el.css('background', '#EEE');
-    },
-    
     setActive: function() {
       if (this.model.get('active')) {
         this.$('.overlay').css('background', 'white');
@@ -66,6 +60,15 @@
       } else {
         this.$('.overlay').css('background', 'grey');
         this.$('.overlay').css('pointer-events', 'auto');
+      }
+      
+      // We have to do this each time, and can't just rely on a listen
+      // to our model's winnerToken property because using .css to set
+      // 'background' overrides the 'background-image' property.  Ugh.
+      if (this.model.get('winnerToken')) {
+        var winnerImg = 'url(img/' + this.model.get('winnerToken') + '.jpg)';
+        this.$('.overlay').css('background-image', winnerImg);
+        this.$('.overlay').css('background-size', '100%');
       }
     },
     
