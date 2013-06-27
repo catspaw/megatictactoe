@@ -31,17 +31,20 @@
   views.BoardView = Backbone.View.extend({
     tagName: 'div',
     
+    template: _.template($('#boardTemplate').html()),
+    
     initialize: function() {
       var squares = this.model.get('squares');
       squares.on('add', this.addOne, this);
       this.model.on('change', this.refresh, this);
-      
+
+      this.$el.html(this.template(this.model.toJSON()));      
       this.model.fill();
     },
     
     addOne: function(item) {
       var view = new views.SquareView({model: item});
-      $('#boards').append(view.render().el);
+      this.$('div').append(view.render().el);
     },
     
     refresh: function() {
@@ -50,14 +53,16 @@
       }
     },
     
+    // Purposefully blank.  Let init and addOne handle all the rendering.
     render: function() {
-      return; // pass
-    }
-  });
+      return this;
+    }  
+    
+   });
   
   
   views.GameView = Backbone.View.extend({
-    tagName: 'div',
+    el: '#game',
     
     initialize: function() {
       var game = this.collection;
@@ -68,8 +73,10 @@
     
     addOne: function(item) {
       var view = new views.BoardView({model: item});
-      //$('#boards').append(view.render().el);
-    }
+      $('#game').append(view.render().el);
+    },
+    
+    render: function() {}
   });
 
 })( app.views);
