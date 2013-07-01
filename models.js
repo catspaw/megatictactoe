@@ -62,6 +62,17 @@
       }
     },
     
+    // Returns a list of all square indices that are available to be clicked.
+    available_squares: function() {
+      var available = [];
+      for (var i=0; i<9; i++) {
+        if (!(this.get('squares').at(i).isTaken())) {
+          available.push(i);
+        }
+      }
+      return available;
+    },
+    
     // One of our squares has been updated.  Check the status of the board.
     refresh: function(square) {
       if (!(this.isWon()) && this.checkForWin()) {
@@ -115,18 +126,30 @@
     defaults: function() {
       return {
         boards: new models.Boards(),
-        currentToken: "X"  // X gets to go first.
+        currentToken: "X",  // X gets to go first.
+        opponent: "player",
+        ai: new models.Opponent({game: this})
       }
     },
   
     initialize: function() {
       this.get('boards').on('change:winnerToken', this.checkEndState, this);
+      this.get('boards').on('change:lastClickIndex', this.prepForNextMove, this);
     },
     
-    // When a turn is over, switch which player is the currentToken.
-    swapTurns: function() {
+    // When a turn is over, switch which player is the currentToken and switch
+    // which board is currently active
+    prepForNextMove: function(last_board, index) {
+      for (var i=0; i<9; i++) {
+        this.get('boards').at(i).set('active', i == index);
+      }
+      
       if (this.get("currentToken") == "X") {
         this.set("currentToken", "O");
+        if (this.get("opponent") != "player") {
+          // Have our AI make the next move.
+          this.get("ai").move();
+        }
       } else {
         this.set("currentToken", "X");
       }
@@ -137,6 +160,17 @@
       for (var i=0; i<9; i++) {
         this.get('boards').add(new models.Board());
       }
+      this.get('boards').at(4).set('active', true);
+    },
+    
+    // Returns the current board.
+    getCurrentBoard: function() {
+      for (var i=0; i<9; i++) {
+        if (this.get('boards').at(i).get('active')) {
+          return this.get('boards').at(i);
+        }
+      }
+      return null;  // Should never get here except on game state errors.
     },
     
     // When one of our boards has been won, check if the game is over.
@@ -162,6 +196,34 @@
       }
     }
 
+  });
+  
+  
+  models.Opponent = Backbone.Model.extend({
+    defaults: {
+      game: null,
+      difficulty: "easy",
+      token: "O",
+    },
+
+    initialize: function() {
+      this.get("game").on('change:opponent', this.changeDifficulty, this);
+    },
+    
+    move: function() {
+      var board = this.get("game").getCurrentBoard();
+      var choices = board.available_squares();
+      var randomIndex = Math.floor(Math.random()*choices.length);
+      
+      console.log("I choose square " + choices[randomIndex]);
+      board.get("squares").at(choices[randomIndex]).place(this.get("token"));
+    },
+    
+    changeDifficulty: function() {
+      this.set("difficulty", this.get("game").get("opponent"));
+      console.log("Changed difficulty to: " + this.get("game").get("opponent"));
+    }
+    
   });
   
 })( app.models );

@@ -48,7 +48,15 @@
   border: thin solid green;
   position: absolute;
   padding: 10px;
-  font-size: 1.5em;;
+  font-size: 1.5em;
+}
+
+#secondplayerbox {
+  top: 150px;
+  right: 20px;
+  border: thin solid green;
+  position: absolute;
+  padding: 10px;
 }
 </style>
 </head>
@@ -58,6 +66,14 @@
 <div id='game'></div>
 
 <div id='infobox'>Current player: <span id='currentToken'>X</span></div>
+
+<div id='secondplayerbox'>
+Player O should be:<br/>
+<input type='radio' name='o_type' value='player' checked>Second player<br/>
+<input type='radio' name='o_type' value='easy'>Easy AI<br/>
+<!-- <input type='radio' name='o_type' value='medium'>Medium AI<br/>
+<input type='radio' name='o_type' value='hard'>Hard AI<br/> -->
+</div>
 
 <script type="text/html" id="squareTemplate">
 <img src="img/empty.jpg" />

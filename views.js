@@ -25,9 +25,7 @@
     },
     
     handleSquareClick: function(e) {
-      if (this.model.place(app.collections.game.get("currentToken"))) {
-        app.collections.game.swapTurns();
-      }
+      this.model.place(app.collections.game.get("currentToken"));
     }
   });
 
@@ -78,16 +76,18 @@
   
   
   views.GameView = Backbone.View.extend({
-    el: '#game',
+    el: 'body',
+    
+    events: {
+      'click input[type=radio]': "changePlayerType"
+    },
     
     initialize: function() {
       var game = this.collection;
       game.get('boards').on('add', this.addOne, this);
-      game.get('boards').on('change:lastClickIndex', this.setBoard, this);
       game.on('change:currentToken', this.render, this);
       
       game.fill();
-      this.setBoard(null, 4);
     },
     
     addOne: function(item) {
@@ -95,10 +95,8 @@
       $('#game').append(view.render().el);
     },
     
-    setBoard: function(last_board, index) {
-      for (var i=0; i<9; i++) {
-        this.collection.get('boards').at(i).set('active', i == index);
-      }
+    changePlayerType: function(e) {
+      this.collection.set('opponent', $(e.currentTarget).val());
     },
     
     render: function() {
